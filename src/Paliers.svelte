@@ -18,7 +18,8 @@
       {#each paliers as palier, i}
         <tr transition:fade>
           <td>
-            {numberFormatter.format((paliers[i - 1] || { limit: 0 }).limit)} - {numberFormatter.format(palier.limit)}
+            {numberFormatter.format((paliers[i - 1] || { limit: 0 }).limit + 1)}
+            - {numberFormatter.format(palier.limit)}
           </td>
           <td>{palier.tax} %</td>
           {#if palier.due}
