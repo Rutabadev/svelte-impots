@@ -1,0 +1,194 @@
+<script lang="ts">
+  import type { Palier } from "./types";
+  import Paliers from "./Paliers.svelte";
+
+  let revenu: number = 0;
+  const currencyFormatter = new Intl.NumberFormat("fr-FR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+    style: "currency",
+    currency: "EUR",
+  });
+  $: formattedRevenu = new Intl.NumberFormat("fr-FR").format(revenu);
+  let impot: number = 0;
+  $: formattedImpot = currencyFormatter.format(impot);
+  let net: number = 0;
+  $: formattedNet = currencyFormatter.format(net);
+  let inCouple: boolean = false;
+  let nbChildren: number = 0;
+  const paliersByYears = {
+    "2019": [
+      {
+        limit: 10064,
+        tax: 0,
+        due: 0,
+      },
+      {
+        limit: 27794,
+        tax: 14,
+        due: 0,
+      },
+      {
+        limit: 74517,
+        tax: 30,
+        due: 0,
+      },
+      {
+        limit: 157806,
+        tax: 41,
+        due: 0,
+      },
+      {
+        limit: Infinity,
+        tax: 45,
+        due: 0,
+      },
+    ],
+    "2020": [
+      {
+        limit: 10064,
+        tax: 0,
+        due: 0,
+      },
+      {
+        limit: 25659,
+        tax: 11,
+        due: 0,
+      },
+      {
+        limit: 73369,
+        tax: 30,
+        due: 0,
+      },
+      {
+        limit: 157806,
+        tax: 41,
+        due: 0,
+      },
+      {
+        limit: Infinity,
+        tax: 45,
+        due: 0,
+      },
+    ],
+  };
+  let year: string = "2020";
+  $: paliers = paliersByYears[year];
+
+  function deformat(stringNumber: string): number {
+    const thousandSeparator = (1111).toLocaleString("fr-FR").replace(/1/g, "");
+    const decimalSeparator = (1.1).toLocaleString("fr-FR").replace(/1/g, "");
+
+    try {
+      return (
+        parseFloat(
+          stringNumber
+            .replace(new RegExp("\\" + thousandSeparator, "g"), "")
+            .replace(new RegExp("\\" + decimalSeparator), ".")
+        ) || 0
+      );
+    } catch (err) {
+      return 0;
+    }
+  }
+
+  function calcImpots(): void {
+    // Adding a one tick timeout to let update paliers computed value
+    setTimeout(() => {
+      const quotient = calcQuotientFamilial({ inCouple, nbChildren });
+      const effectiveRevenu = revenu / quotient;
+      paliers = paliers.map((palier) => {
+        palier.due = 0;
+        return palier;
+      });
+      for (
+        let i = 0;
+        i < paliers.filter(({ limit }) => limit < effectiveRevenu).length + 1;
+        i++
+      ) {
+        const currentPalier = paliers[i];
+        const previousPalier = paliers[i - 1] || { limit: -1 };
+        currentPalier.due =
+          (Math.min(currentPalier.limit, effectiveRevenu) -
+            (previousPalier.limit + 1)) *
+          (currentPalier.tax / 100) *
+          quotient;
+      }
+
+      impot = paliers.reduce((acc, palier) => acc + palier.due, 0);
+      net = revenu - impot;
+    }, 0);
+  }
+
+  function calcQuotientFamilial({ inCouple, nbChildren }) {
+    let quotient = 1;
+    if (inCouple) quotient += 1;
+    for (let i = 0; i < nbChildren; i++) {
+      if (i < 3) quotient += 0.5;
+      else quotient += 1;
+    }
+
+    return quotient;
+  }
+
+  function handleRevenu({ target: { value } }) {
+    revenu = deformat(value);
+    calcImpots();
+  }
+</script>
+
+<main>
+  <div class="form">
+    <div class="wrapper">
+      <div class="subwrapper">
+        <label for="revenu">Revenu</label>
+        <input
+          type="text"
+          id="revenu"
+          value={formattedRevenu}
+          on:input={handleRevenu} />
+      </div>
+      <div class="subwrapper">
+        <label for="inCouple">En couple</label>
+        <input
+          type="checkbox"
+          id="inCouple"
+          bind:checked={inCouple}
+          on:change={calcImpots} />
+      </div>
+      <div class="subwrapper">
+        <label for="nbChildren">Nombre d'enfants</label>
+        <input
+          type="text"
+          id="nbChildren"
+          bind:value={nbChildren}
+          on:input={calcImpots} />
+      </div>
+    </div>
+    <label for="impot">Impôt</label>
+    <input type="text" id="impot" readonly value={formattedImpot} />
+    <label for="net">Après impôt</label>
+    <input type="text" id="net" readonly value={formattedNet} />
+  </div>
+  <div class="infos">
+    <div class="radios">
+      {#each Object.keys(paliersByYears) as currentYear}
+        <label>
+          <input
+            type="radio"
+            bind:group={year}
+            value={currentYear}
+            on:input={calcImpots} />
+          {currentYear}
+        </label>
+      {/each}
+    </div>
+    <p>
+      Taux final: {new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(impot / revenu || 0)}
+    </p>
+    <Paliers {paliers} />
+  </div>
+</main>
+
+<style lang="css" src="./App.css">
+</style>
