@@ -9,7 +9,6 @@
     style: "currency",
     currency: "EUR",
   });
-  $: formattedRevenu = new Intl.NumberFormat("fr-FR").format(revenu);
   let impot: number = 0;
   $: formattedImpot = currencyFormatter.format(impot);
   let net: number = 0;
@@ -75,23 +74,6 @@
   let year: string = "2020";
   $: paliers = paliersByYears[year];
 
-  function deformat(stringNumber: string): number {
-    const thousandSeparator = (1111).toLocaleString("fr-FR").replace(/1/g, "");
-    const decimalSeparator = (1.1).toLocaleString("fr-FR").replace(/1/g, "");
-
-    try {
-      return (
-        parseFloat(
-          stringNumber
-            .replace(new RegExp("\\" + thousandSeparator, "g"), "")
-            .replace(new RegExp("\\" + decimalSeparator), ".")
-        ) || 0
-      );
-    } catch (err) {
-      return 0;
-    }
-  }
-
   function calcImpots(): void {
     // Adding a one tick timeout to let update paliers computed value
     setTimeout(() => {
@@ -109,10 +91,18 @@
         const currentPalier = paliers[i];
         const previousPalier = paliers[i - 1] || { limit: -1 };
         currentPalier.due =
-          (Math.min(currentPalier.limit, effectiveRevenu) -
-            (previousPalier.limit + 1)) *
+          Math.max(
+            Math.min(currentPalier.limit, effectiveRevenu) -
+              (previousPalier.limit + 1),
+            0
+          ) *
           (currentPalier.tax / 100) *
           quotient;
+        console.log(
+          `(${Math.min(currentPalier.limit, effectiveRevenu)} - ${
+            previousPalier.limit + 1
+          }) * ${currentPalier.tax / 100} * ${quotient}`
+        );
       }
 
       impot = paliers.reduce((acc, palier) => acc + palier.due, 0);
@@ -130,11 +120,6 @@
 
     return quotient;
   }
-
-  function handleRevenu({ target: { value } }) {
-    revenu = deformat(value);
-    calcImpots();
-  }
 </script>
 
 <main>
@@ -143,10 +128,10 @@
       <div class="subwrapper">
         <label for="revenu">Revenu</label>
         <input
-          type="text"
+          type="number"
           id="revenu"
-          value={formattedRevenu}
-          on:input={handleRevenu} />
+          bind:value={revenu}
+          on:input={calcImpots} />
       </div>
       <div class="subwrapper">
         <label for="inCouple">En couple</label>
@@ -159,7 +144,7 @@
       <div class="subwrapper">
         <label for="nbChildren">Nombre d'enfants</label>
         <input
-          type="text"
+          type="number"
           id="nbChildren"
           bind:value={nbChildren}
           on:input={calcImpots} />
