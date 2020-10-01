@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Palier } from "./types";
   import Paliers from "./Paliers.svelte";
+  import { onMount } from "svelte";
 
   let revenu: number = 0;
   const currencyFormatter = new Intl.NumberFormat("fr-FR", {
@@ -15,6 +15,7 @@
   $: formattedNet = currencyFormatter.format(net);
   let inCouple: boolean = false;
   let nbChildren: number = 0;
+  let darkTheme: boolean;
   const paliersByYears = {
     "2019": [
       {
@@ -74,6 +75,30 @@
   let year: string = "2020";
   $: paliers = paliersByYears[year];
 
+  onMount(() => {
+    if (localStorage.getItem("darkTheme")) {
+      darkTheme = JSON.parse(localStorage.getItem("darkTheme"));
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      darkTheme = true;
+    }
+    document.querySelector(".theme-button").innerHTML = darkTheme ? "☀️" : "🌕";
+    document.documentElement.setAttribute(
+      "data-dark-theme",
+      darkTheme.toString()
+    );
+  });
+
+  function toggleTheme(event: any) {
+    darkTheme = !darkTheme;
+    darkTheme && (event.target.innerHTML = "☀️");
+    !darkTheme && (event.target.innerHTML = "🌕");
+    document.documentElement.setAttribute(
+      "data-dark-theme",
+      darkTheme.toString()
+    );
+    localStorage.setItem("darkTheme", darkTheme.toString());
+  }
+
   function calcImpots(): void {
     // Adding a one tick timeout to let update paliers computed value
     setTimeout(() => {
@@ -98,11 +123,6 @@
           ) *
           (currentPalier.tax / 100) *
           quotient;
-        console.log(
-          `(${Math.min(currentPalier.limit, effectiveRevenu)} - ${
-            previousPalier.limit + 1
-          }) * ${currentPalier.tax / 100} * ${quotient}`
-        );
       }
 
       impot = paliers.reduce((acc, palier) => acc + palier.due, 0);
@@ -123,6 +143,7 @@
 </script>
 
 <main>
+  <button class="theme-button" on:click={toggleTheme} />
   <div class="form">
     <div class="wrapper">
       <div class="subwrapper">

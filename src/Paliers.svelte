@@ -18,7 +18,7 @@
       {#each paliers as palier, i}
         <tr transition:fade>
           <td>
-            {numberFormatter.format((paliers[i - 1] || { limit: 0 }).limit + 1)}
+            {numberFormatter.format((paliers[i - 1] || { limit: -1 }).limit + 1)}
             - {numberFormatter.format(palier.limit)}
           </td>
           <td>{palier.tax} %</td>
@@ -33,7 +33,6 @@
 
 <style>
   table * {
-    border: 1px solid white;
     padding: 1rem;
   }
 </style>

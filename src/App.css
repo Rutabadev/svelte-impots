@@ -6,7 +6,21 @@ main {
     font-size: calc(10px + 2vmin);
   }
 
-  main > :not(:last-child) {
+  .theme-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    border-radius: 50%;
+    
+  }
+
+  :global([data-dark-theme='true'] .theme-button) {
+    background-color: #333;
+    filter: var(--filter)
+  }
+
+  .form {
     margin-right: 2rem;
   }
 
