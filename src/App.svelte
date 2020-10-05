@@ -104,7 +104,7 @@
     setTimeout(() => {
       const quotient = calcQuotientFamilial({ inCouple, nbChildren });
       const effectiveRevenu = revenu / quotient;
-      paliers = paliers.map((palier) => {
+      paliers = paliers.map((palier: any) => {
         palier.due = 0;
         return palier;
       });
@@ -125,8 +125,8 @@
           quotient;
       }
 
-      impot = paliers.reduce((acc, palier) => acc + palier.due, 0);
-      net = revenu - impot;
+      impot = paliers.reduce((acc: number, palier: any) => acc + palier.due, 0) || 0;
+      net = (revenu - impot) || 0;
     }, 0);
   }
 
@@ -196,5 +196,80 @@
   </div>
 </main>
 
-<style lang="css" src="./App.css">
+<style lang="css">
+  main {    
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
+    gap: 3rem;
+    place-items: center;
+
+    font-size: calc(10px + 2vmin);
+  }
+
+  @media(min-width: 1500px) {
+    main {
+      width: 88%;
+      margin: auto;
+    }
+  }
+
+  .theme-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    border-radius: 50%;    
+  }
+
+  :global([data-dark-theme='true'] .theme-button) {
+    background-color: #333;
+    filter: var(--filter)
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .form :not(:last-child) {
+    margin-bottom: 2rem;
+  }
+
+  input {
+    font-size: 1.4rem;
+  }
+
+  .wrapper {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  @media(min-width: 1300px) {
+    .wrapper {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  input[type="checkbox"] {
+    height: 25px;
+    width: 25px;
+  }
+
+  .subwrapper {
+    text-align: center;
+  }
+
+  .infos :not(table) {
+    text-align: center;
+  }
+  .infos p {
+    margin: 0 0 2rem 0;
+  }
 </style>
