@@ -1,6 +1,7 @@
 <script lang="ts">
   import Paliers from "./Paliers.svelte";
   import { onMount } from "svelte";
+import Switch from "./Switch.svelte";
 
   let revenu: number = 0;
   const currencyFormatter = new Intl.NumberFormat("fr-FR", {
@@ -177,18 +178,7 @@
     <input type="text" id="net" readonly value={formattedNet} />
   </div>
   <div class="infos">
-    <div class="radios">
-      {#each Object.keys(paliersByYears) as currentYear}
-        <label>
-          <input
-            type="radio"
-            bind:group={year}
-            value={currentYear}
-            on:input={calcImpots} />
-          {currentYear}
-        </label>
-      {/each}
-    </div>
+    <Switch left='2019' right='2020' on:change={calcImpots} bind:value={year} checked={true}/>
     <p>
       Taux final: {new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(impot / revenu || 0)}
     </p>
@@ -266,6 +256,9 @@
     text-align: center;
   }
 
+  .infos {
+    display: grid;
+  }
   .infos :not(table) {
     text-align: center;
   }
