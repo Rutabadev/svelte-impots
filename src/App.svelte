@@ -16,7 +16,7 @@ import Switch from "./Switch.svelte";
   $: formattedNet = currencyFormatter.format(net);
   let inCouple: boolean = false;
   let nbChildren: number = 0;
-  let darkTheme: boolean;
+  let darkTheme: boolean = false;
   const paliersByYears = {
     "2019": [
       {
