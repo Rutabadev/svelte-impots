@@ -33,6 +33,10 @@
 
 <style>
   table * {
-    padding: 1rem;
+    padding: .5rem;
+  }
+
+  td {
+    min-width: 95px;
   }
 </style>

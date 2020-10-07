@@ -192,15 +192,13 @@ import Switch from "./Switch.svelte";
     margin-top: 4rem;
     grid-template-columns: 1fr;
     place-items: center;
-
-    font-size: calc(10px + 2vmin);
   }
 
   @media(min-width: 900px) {
     main {
       width: 88%;
       display: grid;
-      gap: 3rem;
+      gap: 1rem;
       grid-template-columns: 1fr 1fr;
       margin: auto;
     }
@@ -211,7 +209,8 @@ import Switch from "./Switch.svelte";
     top: 1rem;
     right: 1rem;
 
-    border-radius: 50%;    
+    border-radius: 50%;
+    text-align: center;
   }
 
   :global([data-dark-theme='true'] .theme-button) {
@@ -228,19 +227,12 @@ import Switch from "./Switch.svelte";
   }
 
   label, input {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   input {
-    font-size: 1.4rem;
-  }
-
-  @media(max-width: 290px) {
-    input {
       width: 100%;
-    }
   }
-
   .wrapper {
     width: 100%;
     display: grid;
@@ -251,7 +243,7 @@ import Switch from "./Switch.svelte";
   @media(min-width: 1300px) {
     .wrapper {
       grid-template-columns: repeat(3, 1fr);
-      gap: 3rem;
+      gap: 1.5rem;
     }
   }
 
@@ -266,7 +258,7 @@ import Switch from "./Switch.svelte";
 
   .infos {
     display: grid;
-    gap: 3rem;
+    gap: 1rem;
   }
   .infos :not(table) {
     text-align: center;
