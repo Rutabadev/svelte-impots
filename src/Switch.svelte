@@ -73,6 +73,8 @@ import { createEventDispatcher } from 'svelte';
 
 <style>
     label {
+        display: flex;
+        align-items: center;
         margin: auto;
         user-select: none;
     }

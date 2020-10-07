@@ -179,9 +179,9 @@ import Switch from "./Switch.svelte";
   </div>
   <div class="infos">
     <Switch left='2019' right='2020' on:change={calcImpots} bind:value={year} checked={true}/>
-    <p>
+    <div>
       Taux final: {new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(impot / revenu || 0)}
-    </p>
+    </div>
     <Paliers {paliers} />
   </div>
 </main>
@@ -189,17 +189,19 @@ import Switch from "./Switch.svelte";
 <style lang="css">
   main {    
     height: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
-    gap: 3rem;
+    margin-top: 4rem;
+    grid-template-columns: 1fr;
     place-items: center;
 
     font-size: calc(10px + 2vmin);
   }
 
-  @media(min-width: 1500px) {
+  @media(min-width: 900px) {
     main {
       width: 88%;
+      display: grid;
+      gap: 3rem;
+      grid-template-columns: 1fr 1fr;
       margin: auto;
     }
   }
@@ -225,12 +227,18 @@ import Switch from "./Switch.svelte";
     width: 100%;
   }
 
-  .form :not(:last-child) {
+  label, input {
     margin-bottom: 2rem;
   }
 
   input {
     font-size: 1.4rem;
+  }
+
+  @media(max-width: 290px) {
+    input {
+      width: 100%;
+    }
   }
 
   .wrapper {
@@ -258,11 +266,9 @@ import Switch from "./Switch.svelte";
 
   .infos {
     display: grid;
+    gap: 3rem;
   }
   .infos :not(table) {
     text-align: center;
-  }
-  .infos p {
-    margin: 0 0 2rem 0;
   }
 </style>
