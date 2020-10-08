@@ -155,7 +155,7 @@ import Switch from "./Switch.svelte";
           bind:value={revenu}
           on:input={calcImpots} />
       </div>
-      <div class="subwrapper">
+      <div class="subwrapper checkbox">
         <label for="inCouple">En couple</label>
         <input
           type="checkbox"
@@ -172,10 +172,14 @@ import Switch from "./Switch.svelte";
           on:input={calcImpots} />
       </div>
     </div>
-    <label for="impot">Impôt</label>
-    <input type="text" id="impot" readonly value={formattedImpot} />
-    <label for="net">Après impôt</label>
-    <input type="text" id="net" readonly value={formattedNet} />
+    <div class="subwrapper">
+      <label for="impot">Impôt</label>
+      <input type="text" id="impot" readonly value={formattedImpot} />
+    </div>
+    <div class="subwrapper">
+      <label for="net">Après impôt</label>
+      <input type="text" id="net" readonly value={formattedNet} />
+    </div>
   </div>
   <div class="infos">
     <Switch left='2019' right='2020' on:change={calcImpots} bind:value={year} checked={true}/>
@@ -194,7 +198,7 @@ import Switch from "./Switch.svelte";
     place-items: center;
   }
 
-  @media(min-width: 900px) {
+  @media(min-width: 640px) {
     main {
       width: 88%;
       display: grid;
@@ -221,18 +225,10 @@ import Switch from "./Switch.svelte";
   .form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: start;
     width: 100%;
   }
 
-  label, input {
-    margin-bottom: 1rem;
-  }
-
-  input {
-      width: 100%;
-  }
   .wrapper {
     width: 100%;
     display: grid;
@@ -247,13 +243,25 @@ import Switch from "./Switch.svelte";
     }
   }
 
+  .subwrapper {
+    margin-bottom: .5rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .checkbox {
+    align-items: center;
+    text-align: center;
+  }
+
+  label {
+    margin-bottom: .3rem;
+  }
+
   input[type="checkbox"] {
     height: 25px;
     width: 25px;
-  }
-
-  .subwrapper {
-    text-align: center;
   }
 
   .infos {

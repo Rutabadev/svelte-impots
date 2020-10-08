@@ -5,35 +5,34 @@
   const numberFormatter = new Intl.NumberFormat("fr-FR");
 </script>
 
-<div>
-  <table>
-    <thead>
-      <tr>
-        <th>Tranche</th>
-        <th>Taxe</th>
-        <th>Montant à payer</th>
+<table>
+  <thead>
+    <tr>
+      <th>Tranche</th>
+      <th>Taxe</th>
+      <th>Montant à payer</th>
+    </tr>
+  </thead>
+  <tbody>
+    {#each paliers as palier, i}
+      <tr transition:fade>
+        <td>
+          {numberFormatter.format((paliers[i - 1] || { limit: -1 }).limit + 1)}
+          - {numberFormatter.format(palier.limit)}
+        </td>
+        <td>{palier.tax} %</td>
+        {#if palier.due}
+          <td transition:fade>{palier.due.toFixed(2)}</td>
+        {/if}
       </tr>
-    </thead>
-    <tbody>
-      {#each paliers as palier, i}
-        <tr transition:fade>
-          <td>
-            {numberFormatter.format((paliers[i - 1] || { limit: -1 }).limit + 1)}
-            - {numberFormatter.format(palier.limit)}
-          </td>
-          <td>{palier.tax} %</td>
-          {#if palier.due}
-            <td transition:fade>{palier.due.toFixed(2)}</td>
-          {/if}
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-</div>
+    {/each}
+  </tbody>
+</table>  
 
 <style>
   table * {
     padding: .5rem;
+    text-align: center;
   }
 
   td {
