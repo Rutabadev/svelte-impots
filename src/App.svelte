@@ -182,7 +182,7 @@ import Switch from "./Switch.svelte";
     </div>
   </div>
   <div class="infos">
-    <Switch left='2019' right='2020' on:change={calcImpots} bind:value={year} checked={true}/>
+    <Switch left='2019' right='2020' on:change={calcImpots} bind:value={year} checked/>
     <div>
       Taux final: {new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(impot / revenu || 0)}
     </div>
