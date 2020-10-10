@@ -1,6 +1,7 @@
 <script lang="ts">
-  import Paliers from "./Paliers.svelte";
   import { onMount } from "svelte";
+  import { tick } from "svelte";
+  import Paliers from "./Paliers.svelte";
   import Switch from "./Switch.svelte";
 
   let revenu: number = 0;
@@ -100,36 +101,38 @@
     localStorage.setItem("darkTheme", darkTheme.toString());
   }
 
-  function calcImpots(): void {
+  async function calcImpots(): Promise<void> {
     // Adding a one tick timeout to let update paliers computed value
-    setTimeout(() => {
-      const quotient = calcQuotientFamilial({ inCouple, nbChildren });
-      const effectiveRevenu = revenu / quotient;
-      paliers = paliers.map((palier: any) => {
-        palier.due = 0;
-        return palier;
-      });
-      for (
-        let i = 0;
-        i < paliers.filter(({ limit }) => limit < effectiveRevenu).length + 1;
-        i++
-      ) {
-        const currentPalier = paliers[i];
-        const previousPalier = paliers[i - 1] || { limit: -1 };
-        currentPalier.due =
-          Math.max(
-            Math.min(currentPalier.limit, effectiveRevenu) -
-              (previousPalier.limit + 1),
-            0
-          ) *
-          (currentPalier.tax / 100) *
-          quotient;
-      }
+    await tick();
+    document.querySelector("form").reportValidity();
+    const quotient = calcQuotientFamilial({ inCouple, nbChildren });
+    const effectiveRevenu = revenu / quotient;
+    paliers = paliers.map((palier: any) => {
+      palier.due = 0;
+      return palier;
+    });
+    for (
+      let i = 0;
+      i < paliers.filter(({ limit }) => limit < effectiveRevenu).length + 1;
+      i++
+    ) {
+      const currentPalier = paliers[i];
+      const previousPalier = paliers[i - 1] || { limit: -1 };
+      currentPalier.due =
+        Math.max(
+          Math.min(currentPalier.limit, effectiveRevenu) -
+            (previousPalier.limit + 1),
+          0
+        ) *
+        (currentPalier.tax / 100) *
+        quotient;
+    }
 
-      impot =
-        paliers.reduce((acc: number, palier: any) => acc + palier.due, 0) || 0;
-      net = revenu - impot || 0;
-    }, 0);
+    impot = Math.max(
+      paliers.reduce((acc: number, palier: any) => acc + palier.due, 0) || 0,
+      0
+    );
+    net = Math.max(revenu - impot, 0) || 0;
   }
 
   function calcQuotientFamilial({ inCouple, nbChildren }) {
@@ -146,42 +149,50 @@
 
 <main>
   <button class="theme-button" on:click={toggleTheme} />
-  <div class="form">
+  <form>
     <div class="wrapper">
       <div class="subwrapper">
         <label for="revenu">Revenu</label>
         <input
           id="revenu"
           type="number"
+          min="0"
+          step="1"
+          list="defaultNumbers"
           bind:value={revenu}
           on:input={calcImpots} />
       </div>
+      <datalist id="defaultNumbers">
+        <option value="33000" />
+        <option value="55000" />
+        <option value="178000" /></datalist>
       <div class="subwrapper checkbox">
         <label for="inCouple">En couple</label>
         <input
-          type="checkbox"
           id="inCouple"
+          type="checkbox"
           bind:checked={inCouple}
           on:change={calcImpots} />
       </div>
       <div class="subwrapper">
         <label for="nbChildren">Nombre d'enfants</label>
         <input
-          type="number"
           id="nbChildren"
+          type="number"
+          min="0"
           bind:value={nbChildren}
           on:input={calcImpots} />
       </div>
     </div>
     <div class="subwrapper">
       <label for="impot">Impôt</label>
-      <input type="text" id="impot" readonly value={formattedImpot} />
+      <input id="impot" type="text" readonly value={formattedImpot} />
     </div>
     <div class="subwrapper">
       <label for="net">Après impôt</label>
-      <input type="text" id="net" readonly value={formattedNet} />
+      <input id="net" type="text" readonly value={formattedNet} />
     </div>
-  </div>
+  </form>
   <div class="infos">
     <Switch
       left="2019"
@@ -228,13 +239,6 @@
     filter: var(--filter);
   }
 
-  .form {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    width: 100%;
-  }
-
   .wrapper {
     width: 100%;
     display: grid;
@@ -254,6 +258,10 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+  }
+
+  input:invalid {
+    border: 2px solid red;
   }
 
   .checkbox {

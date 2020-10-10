@@ -18,9 +18,20 @@
     value = checked ? right : left;
     dispatch("change");
   };
-  const handleKeypress = ({ key }) => {
-    if (isFocused && key === "Enter") {
-      onClick();
+  const handleKeydown = ({ key }) => {
+    if (!isFocused) return;
+    switch (key) {
+      case "Enter":
+        onClick();
+        break;
+      case "ArrowLeft":
+        checked && onClick();
+        break;
+      case "ArrowRight":
+        !checked && onClick();
+        break;
+      default:
+        break;
     }
   };
 </script>
@@ -30,7 +41,7 @@
   on:mouseenter={onHover}
   on:mouseleave={onLeave}
   tabindex="0"
-  on:keypress={handleKeypress}
+  on:keydown={handleKeydown}
   on:focus={onFocus}
   on:blur={onBlur}>
   <span color={!checked ? 'orange' : 'white'}>{left}</span>
