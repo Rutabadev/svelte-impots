@@ -1,7 +1,7 @@
 <script lang="ts">
   import Paliers from "./Paliers.svelte";
   import { onMount } from "svelte";
-import Switch from "./Switch.svelte";
+  import Switch from "./Switch.svelte";
 
   let revenu: number = 0;
   const currencyFormatter = new Intl.NumberFormat("fr-FR", {
@@ -126,8 +126,9 @@ import Switch from "./Switch.svelte";
           quotient;
       }
 
-      impot = paliers.reduce((acc: number, palier: any) => acc + palier.due, 0) || 0;
-      net = (revenu - impot) || 0;
+      impot =
+        paliers.reduce((acc: number, palier: any) => acc + palier.due, 0) || 0;
+      net = revenu - impot || 0;
     }, 0);
   }
 
@@ -150,8 +151,8 @@ import Switch from "./Switch.svelte";
       <div class="subwrapper">
         <label for="revenu">Revenu</label>
         <input
-          type="number"
           id="revenu"
+          type="number"
           bind:value={revenu}
           on:input={calcImpots} />
       </div>
@@ -182,7 +183,12 @@ import Switch from "./Switch.svelte";
     </div>
   </div>
   <div class="infos">
-    <Switch left='2019' right='2020' on:change={calcImpots} bind:value={year} checked/>
+    <Switch
+      left="2019"
+      right="2020"
+      on:change={calcImpots}
+      bind:value={year}
+      checked />
     <div>
       Taux final: {new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(impot / revenu || 0)}
     </div>
@@ -191,14 +197,14 @@ import Switch from "./Switch.svelte";
 </main>
 
 <style lang="css">
-  main {    
+  main {
     height: 100%;
     margin-top: 4rem;
     grid-template-columns: 1fr;
     place-items: center;
   }
 
-  @media(min-width: 640px) {
+  @media (min-width: 640px) {
     main {
       width: 88%;
       display: grid;
@@ -217,9 +223,9 @@ import Switch from "./Switch.svelte";
     text-align: center;
   }
 
-  :global([data-dark-theme='true'] .theme-button) {
+  :global([data-dark-theme="true"] .theme-button) {
     background-color: #333;
-    filter: var(--filter)
+    filter: var(--filter);
   }
 
   .form {
@@ -236,7 +242,7 @@ import Switch from "./Switch.svelte";
     gap: 0;
   }
 
-  @media(min-width: 1300px) {
+  @media (min-width: 1300px) {
     .wrapper {
       grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
@@ -244,7 +250,7 @@ import Switch from "./Switch.svelte";
   }
 
   .subwrapper {
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -256,7 +262,7 @@ import Switch from "./Switch.svelte";
   }
 
   label {
-    margin-bottom: .3rem;
+    margin-bottom: 0.3rem;
   }
 
   input[type="checkbox"] {
