@@ -4,6 +4,4 @@ const app = new App({
   target: document.body,
 });
 
-console.log("test");
-
 export default app;
