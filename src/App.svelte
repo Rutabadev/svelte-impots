@@ -17,8 +17,11 @@
   $: formattedNet = currencyFormatter.format(net);
   let inCouple: boolean = false;
   let nbChildren: number = 0;
-  let darkTheme: boolean = false;
-  const paliersByYears = {
+  let darkTheme: boolean;
+  // When darkTheme changes, toggleTheme()
+  $: (darkTheme = false), toggleTheme();
+  let ready = false;
+  const paliersByYear = {
     "2019": [
       {
         limit: 10064,
@@ -73,9 +76,36 @@
         due: 0,
       },
     ],
+    "2021": [
+      {
+        limit: 10084,
+        tax: 0,
+        due: 0,
+      },
+      {
+        limit: 25710,
+        tax: 11,
+        due: 0,
+      },
+      {
+        limit: 73516,
+        tax: 30,
+        due: 0,
+      },
+      {
+        limit: 158122,
+        tax: 41,
+        due: 0,
+      },
+      {
+        limit: Infinity,
+        tax: 45,
+        due: 0,
+      },
+    ],
   };
-  let year: string = "2020";
-  $: paliers = paliersByYears[year];
+  let year: string = "2021";
+  $: paliers = paliersByYear[year];
 
   onMount(() => {
     if (localStorage.getItem("darkTheme")) {
@@ -83,17 +113,17 @@
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       darkTheme = true;
     }
-    document.querySelector(".theme-button").innerHTML = darkTheme ? "☀️" : "🌕";
     document.documentElement.setAttribute(
       "data-dark-theme",
       darkTheme.toString()
     );
+    ready = true;
   });
 
-  function toggleTheme(event: any) {
-    darkTheme = !darkTheme;
-    darkTheme && (event.target.innerHTML = "☀️");
-    !darkTheme && (event.target.innerHTML = "🌕");
+  async function toggleTheme() {
+    if (!ready) {
+      return;
+    }
     document.documentElement.setAttribute(
       "data-dark-theme",
       darkTheme.toString()
@@ -148,7 +178,12 @@
 </script>
 
 <main>
-  <button class="theme-button" on:click={toggleTheme} />
+  <Switch
+    class="theme-switch"
+    left="☀️"
+    right="🌕"
+    on:change={toggleTheme}
+    bind:value={darkTheme} />
   <form>
     <div class="wrapper">
       <div class="subwrapper">
@@ -194,12 +229,15 @@
     </div>
   </form>
   <div class="infos">
-    <Switch
-      left="2019"
-      right="2020"
-      on:change={calcImpots}
+    <select
+      class="year-select"
+      name="year"
       bind:value={year}
-      checked />
+      on:input={calcImpots}>
+      {#each Object.keys(paliersByYear).reverse() as year}
+        <option value={year}>{year}</option>
+      {/each}
+    </select>
     <div>
       Taux final: {new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(impot / revenu || 0)}
     </div>
@@ -225,7 +263,7 @@
     }
   }
 
-  .theme-button {
+  :global(.theme-switch) {
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -284,5 +322,10 @@
   }
   .infos :not(table) {
     text-align: center;
+  }
+
+  .year-select {
+    max-width: min-content;
+    margin: auto;
   }
 </style>

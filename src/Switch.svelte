@@ -2,26 +2,25 @@
   import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
 
-  export let checked: boolean;
-  export let value: string;
+  export let value: string | boolean;
   export let left = "off";
   export let right = "on";
+  $: checked = value === right || value === true;
   const dispatch = createEventDispatcher();
   let isHovered = false;
   let isFocused = false;
-  const onHover = () => (isHovered = true);
-  const onLeave = () => (isHovered = false);
-  const onFocus = () => (isFocused = true);
-  const onBlur = () => (isFocused = false);
   const onClick = () => {
     checked = !checked;
-    value = checked ? right : left;
+    value = checked;
     dispatch("change");
   };
-  const handleKeydown = ({ key }) => {
+  const handleKeydown = ({ code }) => {
     if (!isFocused) return;
-    switch (key) {
+    switch (code) {
       case "Enter":
+        onClick();
+        break;
+      case "Space":
         onClick();
         break;
       case "ArrowLeft":
@@ -37,13 +36,14 @@
 </script>
 
 <div
+  class={$$props.class}
   on:click={onClick}
-  on:mouseenter={onHover}
-  on:mouseleave={onLeave}
+  on:mouseenter={() => (isHovered = true)}
+  on:mouseleave={() => (isHovered = false)}
   tabindex="0"
   on:keydown={handleKeydown}
-  on:focus={onFocus}
-  on:blur={onBlur}>
+  on:focus={() => (isFocused = true)}
+  on:blur={() => (isFocused = false)}>
   <span color={!checked ? 'orange' : 'white'}>{left}</span>
   <svg width="60" height="36" aria-hidden="true" style="margin-rigth: 4">
     <rect
