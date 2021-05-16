@@ -177,6 +177,11 @@
   }
 </script>
 
+<svelte:head>
+  {#if darkTheme}
+    <meta name="color-scheme" content="dark light" />
+  {/if}
+</svelte:head>
 <main>
   <Switch
     class="theme-switch"
@@ -272,8 +277,8 @@
     text-align: center;
   }
 
-  :global([data-dark-theme="true"] .theme-button) {
-    background-color: #333;
+  :global([data-dark-theme="true"] :is(input, select, .theme-switch)) {
+    background-color: transparent;
     filter: var(--filter);
   }
 
