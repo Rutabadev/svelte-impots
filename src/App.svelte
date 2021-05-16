@@ -277,11 +277,6 @@
     text-align: center;
   }
 
-  :global([data-dark-theme="true"] :is(input, select, .theme-switch)) {
-    background-color: transparent;
-    filter: var(--filter);
-  }
-
   .wrapper {
     width: 100%;
     display: grid;
