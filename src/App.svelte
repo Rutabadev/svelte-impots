@@ -230,11 +230,12 @@
     </div>
   </form>
   <div class="infos">
+    <!-- svelte-ignore a11y-no-onchange -->
     <select
       class="year-select"
       name="year"
       bind:value={year}
-      on:input={calcImpots}>
+      on:change={calcImpots}>
       {#each Object.keys(paliersByYear).reverse() as year}
         <option value={year}>{year}</option>
       {/each}
