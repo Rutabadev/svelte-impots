@@ -6,10 +6,6 @@ html {
   transition: color 300ms, background-color 300ms, filter 300ms;
 }
 
-html[data-dark-theme="true"] body {
-  color: #eee;
-}
-
 html,
 body {
   position: relative;
@@ -19,7 +15,6 @@ body {
 }
 
 body {
-  color: #333;
   margin: 0;
   padding: 8px;
   box-sizing: border-box;

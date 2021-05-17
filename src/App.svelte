@@ -110,24 +110,22 @@
   onMount(() => {
     if (localStorage.getItem("darkTheme")) {
       darkTheme = JSON.parse(localStorage.getItem("darkTheme"));
+      document.documentElement.style["colorScheme"] = darkTheme
+        ? "dark"
+        : "light";
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       darkTheme = true;
     }
-    document.documentElement.setAttribute(
-      "data-dark-theme",
-      darkTheme.toString()
-    );
     ready = true;
   });
 
-  async function toggleTheme() {
+  function toggleTheme() {
     if (!ready) {
       return;
     }
-    document.documentElement.setAttribute(
-      "data-dark-theme",
-      darkTheme.toString()
-    );
+    document.documentElement.style["colorScheme"] = darkTheme
+      ? "dark"
+      : "light";
     localStorage.setItem("darkTheme", darkTheme.toString());
   }
 
@@ -178,9 +176,7 @@
 </script>
 
 <svelte:head>
-  {#if darkTheme}
-    <meta name="color-scheme" content="dark light" />
-  {/if}
+  <meta name="color-scheme" content="light dark" />
 </svelte:head>
 <main>
   <Switch
