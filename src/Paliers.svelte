@@ -20,7 +20,7 @@
           {numberFormatter.format((paliers[i - 1] || { limit: -1 }).limit + 1)} -
           {numberFormatter.format(palier.limit)}
         </td>
-        <td>{palier.tax} %</td>
+        <td class="tax">{palier.tax} %</td>
         {#if palier.due}
           <td transition:fade>{palier.due.toFixed(2)}</td>
         {/if}
@@ -32,7 +32,10 @@
 <style>
   table * {
     padding: 0.5rem;
-    text-align: center;
+  }
+
+  .tax {
+    text-align: right;
   }
 
   td {
