@@ -22,7 +22,7 @@
   $: (darkTheme = false), toggleTheme();
   let ready = false;
   const paliersByYear = {
-    "2019": [
+    2019: [
       {
         limit: 10064,
         tax: 0,
@@ -49,7 +49,7 @@
         due: 0,
       },
     ],
-    "2020": [
+    2020: [
       {
         limit: 10064,
         tax: 0,
@@ -76,7 +76,7 @@
         due: 0,
       },
     ],
-    "2021": [
+    2021: [
       {
         limit: 10084,
         tax: 0,
@@ -103,8 +103,62 @@
         due: 0,
       },
     ],
+    2022: [
+      {
+        limit: 10777,
+        tax: 0,
+        due: 0,
+      },
+      {
+        limit: 27478,
+        tax: 11,
+        due: 0,
+      },
+      {
+        limit: 78570,
+        tax: 30,
+        due: 0,
+      },
+      {
+        limit: 168994,
+        tax: 41,
+        due: 0,
+      },
+      {
+        limit: Infinity,
+        tax: 45,
+        due: 0,
+      },
+    ],
+    2023: [
+      {
+        limit: 11294,
+        tax: 0,
+        due: 0,
+      },
+      {
+        limit: 28797,
+        tax: 11,
+        due: 0,
+      },
+      {
+        limit: 82341,
+        tax: 30,
+        due: 0,
+      },
+      {
+        limit: 177106,
+        tax: 41,
+        due: 0,
+      },
+      {
+        limit: Infinity,
+        tax: 45,
+        due: 0,
+      },
+    ],
   };
-  let year: string = "2021";
+  let year: string = Object.keys(paliersByYear).at(-1);
   $: paliers = paliersByYear[year];
 
   onMount(() => {
@@ -150,7 +204,7 @@
         Math.max(
           Math.min(currentPalier.limit, effectiveRevenu) -
             (previousPalier.limit + 1),
-          0
+          0,
         ) *
         (currentPalier.tax / 100) *
         quotient;
@@ -158,7 +212,7 @@
 
     impot = Math.max(
       paliers.reduce((acc: number, palier: any) => acc + palier.due, 0) || 0,
-      0
+      0,
     );
     net = Math.max(revenu - impot, 0) || 0;
   }
@@ -184,7 +238,8 @@
     left="☀️"
     right="🌕"
     on:change={toggleTheme}
-    bind:value={darkTheme} />
+    bind:value={darkTheme}
+  />
   <form>
     <div class="wrapper">
       <div class="subwrapper">
@@ -196,19 +251,22 @@
           step="1"
           list="defaultNumbers"
           bind:value={revenu}
-          on:input={calcImpots} />
+          on:input={calcImpots}
+        />
       </div>
       <datalist id="defaultNumbers">
         <option value="33000" />
         <option value="55000" />
-        <option value="178000" /></datalist>
+        <option value="178000" /></datalist
+      >
       <div class="subwrapper checkbox">
         <label for="inCouple">En couple</label>
         <input
           id="inCouple"
           type="checkbox"
           bind:checked={inCouple}
-          on:change={calcImpots} />
+          on:change={calcImpots}
+        />
       </div>
       <div class="subwrapper">
         <label for="nbChildren">Nombre d'enfants</label>
@@ -217,7 +275,8 @@
           type="number"
           min="0"
           bind:value={nbChildren}
-          on:input={calcImpots} />
+          on:input={calcImpots}
+        />
       </div>
     </div>
     <div class="subwrapper">
@@ -235,13 +294,17 @@
       class="year-select"
       name="year"
       bind:value={year}
-      on:change={calcImpots}>
+      on:change={calcImpots}
+    >
       {#each Object.keys(paliersByYear).reverse() as year}
         <option value={year}>{year}</option>
       {/each}
     </select>
     <div>
-      Taux final: {new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 }).format(impot / revenu || 0)}
+      Taux final: {new Intl.NumberFormat("fr-FR", {
+        style: "percent",
+        minimumFractionDigits: 2,
+      }).format(impot / revenu || 0)}
     </div>
     <Paliers {paliers} />
   </div>
