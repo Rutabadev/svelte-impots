@@ -332,8 +332,6 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
-
-    border-radius: 50%;
     text-align: center;
   }
 
